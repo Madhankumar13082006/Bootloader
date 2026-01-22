@@ -1,0 +1,14 @@
+BUILD_DIR=../build/os
+
+OS_SRCS := $(wildcard *.asm)
+OS_OBJS := $(patsubst %.asm,$(BUILD_DIR)/%.o,$(OS_SRCS))
+
+.PHONY: all clean
+
+all: $(OS_OBJS)
+
+$(BUILD_DIR)/%.o: %.asm
+	nasm -f bin $< -o $@
+
+clean:
+	rm -f $(BUILD_DIR)/*.o
