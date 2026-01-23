@@ -21,3 +21,4 @@ bootdisk: bootloader os
 clean:
 	$(MAKE) -C bootloader clean
 	$(MAKE) -C os clean
+	rm -f $(DISK_IMG)
