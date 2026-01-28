@@ -1,22 +1,25 @@
-BUILD_DIR=build
-BOOTLOADER=$(BUILD_DIR)/bootloader/bootloader.o
-OS=$(BUILD_DIR)/os/kernal.o
-DISK_IMG=disk.img
+BUILD_DIR  = build
+BOOTLOADER = $(BUILD_DIR)/bootloader/bootloader.bin
+KERNEL     = $(BUILD_DIR)/os/kernel.bin
+DISK_IMG   = build/disk.img
 
-.PHONY: all bootdisk bootloader os clean
+.PHONY: all clean qemu bootloader kernel
 
-all: bootdisk
+all: $(DISK_IMG)
 
 bootloader:
 	$(MAKE) -C bootloader
 
-os:
+kernel:
 	$(MAKE) -C os
 
-bootdisk: bootloader os
+$(DISK_IMG): bootloader kernel
 	dd if=/dev/zero of=$(DISK_IMG) bs=512 count=2880
-	dd conv=notrunc if=$(BOOTLOADER) of=$(DISK_IMG) bs=512 count=1 seek=0
-	dd conv=notrunc if=$(OS) of=$(DISK_IMG) bs=512 count=1 seek=1
+	dd if=$(BOOTLOADER) of=$(DISK_IMG) bs=512 count=1 seek=0 conv=notrunc
+	dd if=$(KERNEL) of=$(DISK_IMG) bs=512 count=1 seek=1 conv=notrunc
+
+qemu: $(DISK_IMG)
+	qemu-system-i386 -fda $(DISK_IMG)
 
 clean:
 	$(MAKE) -C bootloader clean

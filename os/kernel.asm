@@ -1,5 +1,13 @@
-org 0x0500  ; starting of sector or location
-bits 16 ; 16 bit in real mode
+; ===============================
+; Real-mode kernel (loaded at 0x500)
+; ===============================
+
+%ifndef ELF
+org 0x500
+%endif
+
+bits 16
+global start
 
 start:
     mov ah, 0x0E ;acculator high just select character print sunction like 

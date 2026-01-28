@@ -1,14 +1,19 @@
-BUILD_DIR=../build/bootloader
+# Output directory (relative to bootloader/)
+BUILD_DIR := ../build/bootloader
 
-OS_SRCS := $(wildcard *.asm)
-OS_OBJS := $(patsubst %.asm,$(BUILD_DIR)/%.o,$(OS_SRCS))
+BOOT_BIN := $(BUILD_DIR)/bootloader.bin
+BOOT_ELF := $(BUILD_DIR)/bootloader.elf
+BOOT_OBJ := $(BUILD_DIR)/bootloader.o
 
 .PHONY: all clean
 
-all: $(OS_OBJS)
+all: $(BOOT_BIN)
 
-$(BUILD_DIR)/%.o: %.asm
-	nasm -f bin $< -o $@
+$(BOOT_BIN): bootloader.asm bootloader.lds
+	mkdir -p $(BUILD_DIR)
+	nasm -f elf32 -DELF -g -F dwarf bootloader.asm -o $(BOOT_OBJ)
+	ld -m elf_i386 -T bootloader.lds $(BOOT_OBJ) -o $(BOOT_ELF)
+	objcopy -O binary $(BOOT_ELF) $(BOOT_BIN)
 
 clean:
-	rm -f $(BUILD_DIR)/*.o
+	rm -rf $(BUILD_DIR)

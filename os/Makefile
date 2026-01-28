@@ -1,14 +1,19 @@
-BUILD_DIR=../build/os
+# Output directory (relative to os/)
+BUILD_DIR := ../build/os
 
-BOOTLOADER_SRCS := $(wildcard *.asm)
-BOOTLOADER_OBJS := $(patsubst %.asm,$(BUILD_DIR)/%.o,$(BOOTLOADER_SRCS))
+KERNEL_OBJ = $(BUILD_DIR)/kernel.o
+KERNEL_ELF = $(BUILD_DIR)/kernel.elf
+KERNEL_BIN = $(BUILD_DIR)/kernel.bin
 
 .PHONY: all clean
 
-all: $(BOOTLOADER_OBJS)
+all: $(KERNEL_BIN)  #initally loads all in this directory
 
-$(BUILD_DIR)/%.o: %.asm
-	nasm -f bin $< -o $@
+$(KERNEL_BIN): kernel.asm kernel.lds  #this bin depends on .asm and .lsd
+	mkdir -p $(BUILD_DIR)
+	nasm -f elf32 -DELF -g -F dwarf kernel.asm -o $(KERNEL_OBJ)  #build .obj
+	ld -m elf_i386 -T kernel.lds $(KERNEL_OBJ) -o $(KERNEL_ELF) #build .elf
+	objcopy -O binary $(KERNEL_ELF) $(KERNEL_BIN) #build .bin --final need to bootloader to load in bootloader bios is need it 
 
 clean:
-	rm -f $(BUILD_DIR)/*.o
+	rm -rf $(BUILD_DIR)
