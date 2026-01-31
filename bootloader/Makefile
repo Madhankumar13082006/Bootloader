@@ -1,3 +1,4 @@
+#This make similary like os/makefile
 # Output directory (relative to bootloader/)
 BUILD_DIR := ../build/bootloader
 

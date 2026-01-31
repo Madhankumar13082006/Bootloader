@@ -3,17 +3,25 @@
 ; ===============================
 
 %ifndef ELF
-org 0x500
+org 0x500 ; as same pretend this sector starting address is 0x500
 %endif
 
 bits 16
 global start
 
 start:
-    mov ah, 0x0E ;acculator high just select character print sunction like 
-    mov al, 'M' ; then print it print M
-    int 0x10 ;which location to print like grid of the computer screen 
+    mov si, msg        ; SI points to message
 
-hang: ; safe stop
+.print:
+    lodsb              ; AL = [SI], SI++
+    cmp al, 0
+    je hang             ; end of string
+    mov ah, 0x0E        ; BIOS teletype
+    int 0x10
+    jmp .print
+
+hang:
     hlt
     jmp hang
+
+msg db "Maddy Kernel loaded successfully", 0
