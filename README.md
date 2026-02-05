@@ -101,3 +101,28 @@ This is a minimal educational OS project, focused on clarity and fundamentals, n
 📚 Reference
 
 Operating Systems: From 0 to 1
+
+
+
+__________________________________________________________________________________________
+Power on
+ ↓
+CPU reset (CS:IP = F000:FFF0)
+ ↓
+BIOS ROM executes
+ ↓
+Hardware init + IVT setup
+ ↓
+POST
+ ↓
+Boot device selection
+ ↓
+Boot sector loaded to 0x7C00
+ ↓
+Jump to bootloader
+ ↓
+Bootloader loads kernel
+ ↓
+CPU mode switch
+ ↓
+Jump to kernel entry
